@@ -83,3 +83,11 @@ fn loops_assigns_coverage() {
 fn paths_coverage() {
     check_percentage("paths", 1.0f64, true);
 }
+
+#[test]
+fn futures_coverage() {
+    // Failures were spurious so run this test 10 times to be sure
+    for _i in 0..10 {
+        check_percentage("futures", 1.0f64, true);
+    }
+}
