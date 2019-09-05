@@ -40,7 +40,6 @@
 /// ```
 use std::error;
 use std::fmt;
-use std::fs::File;
 use std::io::{Cursor, Write};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -52,12 +51,12 @@ use quick_xml::{
 
 use chrono::offset::Utc;
 
-use crate::config::Config;
+use crate::config::{Config, OutputFile};
 use crate::traces::{CoverageStat, Trace, TraceMap};
 
-pub fn report(traces: &TraceMap, config: &Config) -> Result<(), Error> {
+pub fn report(traces: &TraceMap, config: &Config, output_file: &OutputFile) -> Result<(), Error> {
     let result = Report::render(config, traces)?;
-    result.export(config)
+    result.export(config, output_file)
 }
 
 #[derive(Debug)]
@@ -131,8 +130,8 @@ impl Report {
         })
     }
 
-    pub fn export(&self, _config: &Config) -> Result<(), Error> {
-        let mut file = File::create("cobertura.xml")
+    pub fn export(&self, _config: &Config, output_file: &OutputFile) -> Result<(), Error> {
+        let mut file = output_file.create_or_else("cobertura.xml")
             .map_err(|e| Error::ExportError(quick_xml::Error::Io(e)))?;
 
         let mut writer = Writer::new(Cursor::new(vec![]));

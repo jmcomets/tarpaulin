@@ -327,20 +327,19 @@ pub fn report_coverage(config: &Config, result: &TraceMap) -> Result<(), RunErro
             info!("Coverage data sent");
         }
 
-        for g in &config.generate {
-            match *g {
-                OutputFile::Xml => {
-                    report::cobertura::report(result, config).map_err(|e| RunError::XML(e))?;
-                }
-                OutputFile::Html => {
-                    report::html::export(result, config)?;
-                }
-                _ => {
-                    return Err(RunError::OutFormat(
-                        "Format currently unsupported".to_string(),
-                    ));
-                }
+        match config.output_type {
+            Some(OutputType::Xml) => {
+                report::cobertura::report(result, config, &config.output_file).map_err(|e| RunError::XML(e))?;
             }
+            Some(OutputType::Html) => {
+                report::html::export(result, config, &config.output_file)?;
+            }
+            Some(_) => {
+                return Err(RunError::OutFormat(
+                    "Format currently unsupported".to_string(),
+                ));
+            }
+            None => { }
         }
 
         Ok(())

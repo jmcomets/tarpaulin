@@ -1,9 +1,9 @@
-use crate::config::Config;
+use crate::config::{Config, OutputFile};
 use crate::errors::*;
 use crate::traces::{Trace, TraceMap};
 use crate::report::safe_json;
 use serde::Serialize;
-use std::fs::{read_to_string, File};
+use std::fs;
 use std::io::Write;
 
 #[derive(Serialize)]
@@ -20,10 +20,10 @@ struct CoverageReport {
     pub files: Vec<SourceFile>,
 }
 
-pub fn export(coverage_data: &TraceMap, _config: &Config) -> Result<(), RunError> {
+pub fn export(coverage_data: &TraceMap, _config: &Config, output_file: &OutputFile) -> Result<(), RunError> {
     let mut report = CoverageReport { files: Vec::new() };
     for (path, traces) in coverage_data.iter() {
-        let content = match read_to_string(path) {
+        let content = match fs::read_to_string(path) {
             Ok(k) => k,
             Err(e) => {
                 return Err(RunError::Html(format!(
@@ -45,7 +45,7 @@ pub fn export(coverage_data: &TraceMap, _config: &Config) -> Result<(), RunError
         });
     }
 
-    let mut file = match File::create("tarpaulin-report.html") {
+    let mut file = match output_file.create_or_else("tarpaulin-report.html") {
         Ok(k) => k,
         Err(e) => {
             return Err(RunError::Html(format!(

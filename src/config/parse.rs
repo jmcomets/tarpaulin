@@ -48,8 +48,12 @@ pub(super) fn get_report_uri(args: &ArgMatches) -> Option<String> {
     args.value_of("report-uri").map(ToString::to_string)
 }
 
-pub(super) fn get_outputs(args: &ArgMatches) -> Vec<OutputFile> {
-    values_t!(args.values_of("out"), OutputFile).unwrap_or(vec![])
+pub(super) fn get_output_type(args: &ArgMatches) -> Option<OutputType> {
+    value_t!(args.value_of("output-type"), OutputType).ok()
+}
+
+pub(super) fn get_output_file(args: &ArgMatches) -> OutputFile {
+    value_t!(args.value_of("output-file"), OutputFile).unwrap_or_default()
 }
 
 pub(super) fn get_run_types(args: &ArgMatches) -> Vec<RunType> {

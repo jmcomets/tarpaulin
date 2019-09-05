@@ -77,9 +77,9 @@ fn main() -> Result<(), String> {
                  --timeout -t [SECONDS] 'Integer for the maximum time in seconds without response from test before timeout (default is 1 minute).'
                  --release   'Build in release mode.'")
             .args(&[
-                Arg::from_usage("--out -o [FMT]   'Output format of coverage report'")
-                    .possible_values(&OutputFile::variants())
-                    .multiple(true),
+                Arg::from_usage("--output-type [FMT] 'Output format of coverage report'")
+                    .possible_values(&OutputType::variants()),
+                Arg::from_usage("--output-file -o [FMT]   'Output file for coverage report'"),
                 Arg::from_usage("--run-types [TYPE] 'Type of the coverage run'")
                     .possible_values(&RunType::variants())
                     .multiple(true),

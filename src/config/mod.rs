@@ -37,8 +37,10 @@ pub struct Config {
     pub line_coverage: bool,
     /// Flag specifying to run branch coverage
     pub branch_coverage: bool,
-    /// Output files to generate
-    pub generate: Vec<OutputFile>,
+    /// Output file
+    pub output_file: OutputFile,
+    /// Output type
+    pub output_type: Option<OutputType>,
     /// Key relating to coveralls service or repo
     pub coveralls: Option<String>,
     /// Enum representing CI tool used.
@@ -86,7 +88,8 @@ impl Default for Config {
             count: false,
             line_coverage: true,
             branch_coverage: false,
-            generate: vec![],
+            output_type: Default::default(),
+            output_file: Default::default(),
             coveralls: None,
             ci_tool: None,
             report_uri: None,
@@ -121,7 +124,8 @@ impl<'a> From<&'a ArgMatches<'a>> for Config {
             count: args.is_present("count"),
             line_coverage: get_line_cov(args),
             branch_coverage: get_branch_cov(args),
-            generate: get_outputs(args),
+            output_type: get_output_type(args),
+            output_file: get_output_file(args),
             coveralls: get_coveralls(args),
             ci_tool: get_ci(args),
             report_uri: get_report_uri(args),
